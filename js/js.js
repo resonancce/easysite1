@@ -1,4 +1,4 @@
-
+//2048
 class grid_Cell {
     constructor (grid_item){
         this.cell = document.createElement('div');
