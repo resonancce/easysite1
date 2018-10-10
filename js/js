@@ -1,0 +1,15 @@
+
+
+
+var item = document.createElement('div');
+item.className = 'grid_item';
+item.innerHTML = '<strong>2</strong>';
+grid_cell.appendChild(item);
+
+$(function () {
+    $(".head text").click(function () {
+        $(this).css('color', 'black');
+
+    })
+
+});
