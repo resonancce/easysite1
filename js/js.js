@@ -101,7 +101,31 @@ class game_2048 {
         }
     }
 
+    moveLeft() {
+        let hasMoved = false;
+        for (let i = 0; i < this.grid.length; i++) {
+            for (let j = this.grid[i].length - 1; j >= 0; j--) {
+                let currentCell = this.grid[i][j];
+                let nextCellKey = j - 1;
 
+                while ( nextCellKey >= 0) {
+                    let nextCell = this.grid[i][nextCellKey];
+                    if (!nextCell.isEmpty || (nextCellKey == (0)) ) {
+
+                        this.grid[i][nextCellKey].x2(currentCell);
+                        hasMoved = true;
+
+                    }
+                    nextCellKey--;
+                    nextCell = this.grid[i][nextCellKey];
+                }
+            }
+        }
+
+        if (hasMoved) {
+            this.randomCell();
+        }
+    }
 
 }
 
@@ -121,7 +145,7 @@ function moveRect(e){
 
     switch(e.keyCode){
 
-        case 37: // если нажата клавиша влево
+        case 37: game.moveLeft();// если нажата клавиша влево
 
 
             break;
