@@ -1,8 +1,4 @@
 
-
-
-
-
 class grid_Cell {
     constructor (grid_item){     // создание ячеек
 
@@ -14,37 +10,45 @@ class grid_Cell {
             this.spawn();   //генерация 2 и 4
 
         }
-        this.cell.onclick = this.x2.bind(this);
+
 
     }
     get value(){
 
-        return this._value || '';
+        return this._value || 0;
     }
 
     set value(value){
         this._value = value ;
-
-        this.cell.innerHTML = value;
-
+       if (value == 0) {
+           this.cell.innerHTML = '' ;
+       } else {this.cell.innerHTML = value}
     }
-
-    x2(){
-        this.value *= 2 ;
+    clear() {
+        this.value = '';
+    }
+    x2(cell){
+        this.value += cell.value ;
+        cell.clear();
     }
 
     spawn() {
         this.value = Math.random() > 0.9 ? 4 : 2;
     }
+    get isEmpty() {
+        return this.value == 0;
+    }
 }
+
 class game_2048 {
-    constructor (Element, size) {
+    constructor(Element, size) {
+        this.size = size;
         let grid_item = document.createElement('div');
         grid_item.className = 'grid';
         Element.appendChild(grid_item);
 
 
-        this.grid = []
+        this.grid = [];
 
         for (let i = 0; i < size; i++) {
             this.grid[i] = [];
@@ -53,36 +57,62 @@ class game_2048 {
 
             }
         }
-        console.log(this.grid);
+
     }
-    randomcell() {
-        let emptyGridCell = [];
-        for (let i = 0; i<this.grid; i++)
-            for (let j = 0; j < this.grid[i].length; j++) {
-             if(!this.grid[i][j].value){
-                 emptyGridCell.push(this.grid[i][j]);
-             }
+
+        randomCell() {
+            let emptyGridCells = [];
+            for (let i = 0; i < this.grid.length; i++)
+                for (let j = 0; j < this.grid[i].length; j++) {
+                    if (!this.grid[i][j].value) {
+                        emptyGridCells.push(this.grid[i][j]);
+                    }
+                }
+            if (emptyGridCells.length) {
+                emptyGridCells[getRandomInterval(0, emptyGridCells.length - 1)].spawn();
+            } else {
+                alert('loser');
             }
-        getRandomInterval(0, emptyGridCell.length - 1);
+        }
 
-    }
+    moveRight() {
+        let hasMoved = false;
+        for (let i = 0; i < this.grid.length; i++) {
+            for (let j = this.grid[i].length - 1; j >= 0; j--) {
+                let currentCell = this.grid[i][j];
+                let nextCellKey = j + 1;
 
-    moveCellRight(){
-        for (let i = 0; i < this.grid; i++)
-            for (let j = this.grid[i].length - 1; j >= 0;j++){
+                while (nextCellKey < this.size) {
+                    let nextCell = this.grid[i][nextCellKey];
+                    if (!nextCell.isEmpty || (nextCellKey == (this.size - 1)) ) {
 
+                        this.grid[i][nextCellKey].x2(currentCell);
+                        hasMoved = true;
+
+                    }
+                    nextCellKey++;
+                    nextCell = this.grid[i][nextCellKey];
+                }
             }
+        }
 
+        if (hasMoved) {
+            this.randomCell();
+        }
     }
+
+
 
 }
+
 let getRandomInterval = function (min, max) {
 
     return Math.floor(Math.random() * (max - min + 1)) + min;
 
 }
 
-new game_2048(document.body, 4);
+
+let game = new game_2048(document.body, 4);
 
 
 function moveRect(e){
@@ -91,14 +121,14 @@ function moveRect(e){
 
     switch(e.keyCode){
 
-        case 37:  // если нажата клавиша влево
+        case 37: // если нажата клавиша влево
 
 
             break;
         case 38:   // если нажата клавиша вверх
 
             break;
-        case 39:   // если нажата клавиша вправо
+        case 39: game.moveRight();  // если нажата клавиша вправо
 
             break;
         case 40:   // если нажата клавиша вниз
@@ -106,6 +136,5 @@ function moveRect(e){
             break;
     }
 }
-
 
 addEventListener("keydown", moveRect);
