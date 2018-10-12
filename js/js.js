@@ -86,8 +86,10 @@ class game_2048 {
                     let nextCell = this.grid[i][nextCellKey];
                     if (!nextCell.isEmpty || (nextCellKey == (this.size - 1)) ) {
 
-                        this.grid[i][nextCellKey].x2(currentCell);
-                        hasMoved = true;
+                             this.grid[i][nextCellKey].x2(currentCell);
+                             hasMoved = true;
+
+
 
                     }
                     nextCellKey++;
