@@ -58,6 +58,8 @@ class game_2048 {
             }
         }
 
+
+
     }
 
         randomCell() {
@@ -73,12 +75,21 @@ class game_2048 {
             } else {
                 alert('loser');
             }
+
+            var sum = 0;
+            for(let i = 0; i < this.grid.length; i++){
+                for (let j = 0; j < this.grid[i].length; j++) {
+                    sum += this.grid[i][j].value;
+                }
+            }
+            console.log(sum);
+            document.querySelector('.score').innerHTML = sum;
         }
 
     moveRight() {
         let hasMoved = false;
-        for (let i = 0; i < this.grid.length; i++) {
-            for (let j = this.grid[i].length - 1; j >= 0; j--) {
+        for (let i = 0; i < this.size; i++) {
+            for (let j = this.size - 1; j >= 0; j--) {
                 let currentCell = this.grid[i][j];
                 let nextCellKey = j + 1;
 
@@ -86,10 +97,8 @@ class game_2048 {
                     let nextCell = this.grid[i][nextCellKey];
                     if (!nextCell.isEmpty || (nextCellKey == (this.size - 1)) ) {
 
-                             this.grid[i][nextCellKey].x2(currentCell);
-                             hasMoved = true;
-
-
+                            this.grid[i][nextCellKey].x2(currentCell);
+                            hasMoved = true;
 
                     }
                     nextCellKey++;
@@ -105,21 +114,77 @@ class game_2048 {
 
     moveLeft() {
         let hasMoved = false;
-        for (let i = 0; i < this.grid.length; i++) {
-            for (let j = this.grid[i].length - 1; j >= 0; j--) {
+        for (let i = 0; i < this.size; i++) {
+            for (let j = this.size - 1; j >= 0; j--) {
                 let currentCell = this.grid[i][j];
                 let nextCellKey = j - 1;
 
                 while ( nextCellKey >= 0) {
                     let nextCell = this.grid[i][nextCellKey];
                     if (!nextCell.isEmpty || (nextCellKey == (0)) ) {
+                     if( currentCell.value == nextCell.value) {
+                         this.grid[i][nextCellKey].x2(currentCell);
+                         hasMoved = true;
+                     } else { if (this.grid[i][nextCellKey].isEmpty) {
+                         this.grid[i][nextCellKey].x2(currentCell);
+                         hasMoved = true;
+                     } else {  hasMoved = true;break;}
+                     }
 
-                        this.grid[i][nextCellKey].x2(currentCell);
+                     break;
+                    }
+                    nextCellKey--;
+                    nextCell = this.grid[i][nextCellKey];
+                }
+            }
+        }
+
+        if (hasMoved) {
+            this.randomCell();
+        }
+    }
+    moveUp() {
+        let hasMoved = false;
+        for (let j = 0; j < this.size; j++) {
+            for (let i = this.size - 1 ; i >= 0; i--) {
+                let currentCell = this.grid[i][j];
+                let nextCellKey = i - 1;
+
+                while ( nextCellKey >= 0) {
+                    let nextCell = this.grid[nextCellKey][j];
+                    if (!nextCell.isEmpty || (nextCellKey == (0)) ) {
+
+                        this.grid[nextCellKey][j].x2(currentCell);
                         hasMoved = true;
 
                     }
                     nextCellKey--;
-                    nextCell = this.grid[i][nextCellKey];
+                    nextCell = this.grid[j][nextCellKey];
+                }
+            }
+        }
+
+        if (hasMoved) {
+            this.randomCell();
+        }
+    }
+    moveDown() {
+        let hasMoved = false;
+        for (let j = 0; j < this.size; j++) {
+            for (let i = this.size - 1 ; i >= 0; i--) {
+                let currentCell = this.grid[i][j];
+                let nextCellKey = i + 1;
+
+                while ( nextCellKey < this.size) {
+                    let nextCell = this.grid[nextCellKey][j];
+                    if (!nextCell.isEmpty || (nextCellKey == (this.size - 1)) ) {
+
+                        this.grid[nextCellKey][j].x2(currentCell);
+                        hasMoved = true;
+
+                    }
+                    nextCellKey++;
+                    nextCell = this.grid[j][nextCellKey];
                 }
             }
         }
@@ -148,16 +213,14 @@ function moveRect(e){
     switch(e.keyCode){
 
         case 37: game.moveLeft();// если нажата клавиша влево
-
-
             break;
-        case 38:   // если нажата клавиша вверх
+        case 38: game.moveUp() ; // если нажата клавиша вверх
 
             break;
         case 39: game.moveRight();  // если нажата клавиша вправо
 
             break;
-        case 40:   // если нажата клавиша вниз
+        case 40: game.moveDown(); // если нажата клавиша вниз
 
             break;
     }
