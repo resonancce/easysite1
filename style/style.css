@@ -39,7 +39,7 @@ html {
 
 
 }
-.restart-button {
+#restart-button {
     position: absolute;
     bottom: 0;
     background: #8f7a66;

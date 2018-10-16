@@ -1,7 +1,8 @@
 
 class grid_Cell {
-    constructor (grid_item){     // создание ячеек
-
+    constructor (grid_item, game_2048){
+        // создание ячеек
+        this.game_2048 = game_2048;
         this.cell = document.createElement('div');
         this.cell.className = 'grid_cell';
         grid_item.appendChild(this.cell);
@@ -13,6 +14,7 @@ class grid_Cell {
 
 
     }
+
     get value(){
 
         return this._value || 0;
@@ -24,10 +26,16 @@ class grid_Cell {
            this.cell.innerHTML = '' ;
        } else {this.cell.innerHTML = value}
     }
+
     clear() {
         this.value = '';
     }
+
+
     x2(cell){
+        if (this.value){
+            this.game_2048.ratting(this.value + cell.value);
+        }
         this.value += cell.value ;
         cell.clear();
     }
@@ -35,38 +43,53 @@ class grid_Cell {
     spawn() {
         this.value = Math.random() > 0.9 ? 4 : 2;
     }
+
     get isEmpty() {
         return this.value == 0;
     }
+
     isSameGridCell(cell){
         return this.value == cell.value;
     }
+
+
 }
 
 class game_2048 {
     constructor(Element, size) {
         this.size = size;
-        var grid_item = document.createElement('div');
+        let grid_item = document.createElement('div');
         grid_item.className = 'grid';
         Element.appendChild(grid_item);
-
+        this.sum = 0;
 
         this.grid = [];
 
         for (let i = 0; i < size; i++) {
             this.grid[i] = [];
             for (let j = 0; j < size; j++) {
-                this.grid[i][j] = new grid_Cell(grid_item);
+                this.grid[i][j] = new grid_Cell(grid_item, this);
 
             }
         }
 
+    }
 
+    set sum(value){
+        this._sum = value;
+        document.querySelector('.score').innerHTML = value;//
+    }
 
+    get sum(){
+        return this._sum;
+    }
+
+    ratting(value){
+        this.sum += value;
     }
 
         randomCell() {
-            let emptyGridCells = [];
+            var emptyGridCells = [];
             for (let i = 0; i < this.grid.length; i++)
                 for (let j = 0; j < this.grid[i].length; j++) {
                     if (!this.grid[i][j].value) {
@@ -79,19 +102,30 @@ class game_2048 {
                 alert('loser');
             }
 
-            var sum = 0;
+
             for(let i = 0; i < this.grid.length; i++){
                 for (let j = 0; j < this.grid[i].length; j++) {
-                    sum += this.grid[i][j].value;
+
                     if (this.grid[i][j].value == 8){
-                        alert('You win!');
-                      this.grid[i][j].clear();
-                      emptyGridCells.clear();
+
+                        setTimeout(function (){var istrue = confirm("Вы выиграли, хотите продолжить?");
+                            if (istrue) {
+
+                            }
+                            else {
+                                new game_2048(document.body, 4);;
+                          }
+                        },200);
                     }
+
                 }
             }
-            document.querySelector('.score').innerHTML = sum;
+
+
         }
+
+
+
 
     moveRight() {
         let hasMoved = false;
@@ -122,6 +156,7 @@ class game_2048 {
         if (hasMoved) {
             this.randomCell();
         }
+
     }
 
     moveLeft() {
