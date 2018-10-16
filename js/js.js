@@ -5,7 +5,7 @@ class grid_Cell {
         this.cell = document.createElement('div');
         this.cell.className = 'grid_cell';
         grid_item.appendChild(this.cell);
-        if (Math.random() > 0.8) {
+        if (Math.random() > 0.9) {
 
             this.spawn();   //генерация 2 и 4
 
@@ -38,12 +38,15 @@ class grid_Cell {
     get isEmpty() {
         return this.value == 0;
     }
+    isSameGridCell(cell){
+        return this.value == cell.value;
+    }
 }
 
 class game_2048 {
     constructor(Element, size) {
         this.size = size;
-        let grid_item = document.createElement('div');
+        var grid_item = document.createElement('div');
         grid_item.className = 'grid';
         Element.appendChild(grid_item);
 
@@ -80,9 +83,13 @@ class game_2048 {
             for(let i = 0; i < this.grid.length; i++){
                 for (let j = 0; j < this.grid[i].length; j++) {
                     sum += this.grid[i][j].value;
+                    if (this.grid[i][j].value == 8){
+                        alert('You win!');
+                      this.grid[i][j].clear();
+                      emptyGridCells.clear();
+                    }
                 }
             }
-            console.log(sum);
             document.querySelector('.score').innerHTML = sum;
         }
 
@@ -95,11 +102,16 @@ class game_2048 {
 
                 while (nextCellKey < this.size) {
                     let nextCell = this.grid[i][nextCellKey];
-                    if (!nextCell.isEmpty || (nextCellKey == (this.size - 1)) ) {
-
+                    if (!nextCell.isEmpty || this.LastKey(nextCellKey) ) {
+                        if ((nextCell.isEmpty && this.LastKey(nextCellKey))
+                            || nextCell.isSameGridCell(currentCell)) {
                             this.grid[i][nextCellKey].x2(currentCell);
                             hasMoved = true;
-
+                            } else if (!nextCell.isEmpty &&   nextCellKey - 1 != j) {
+                            this.grid[i][nextCellKey - 1].x2(currentCell);
+                            hasMoved = true;
+                        }
+                            break;
                     }
                     nextCellKey++;
                     nextCell = this.grid[i][nextCellKey];
@@ -115,23 +127,22 @@ class game_2048 {
     moveLeft() {
         let hasMoved = false;
         for (let i = 0; i < this.size; i++) {
-            for (let j = this.size - 1; j >= 0; j--) {
+            for (let j = 1; j < this.size ; j++) {
                 let currentCell = this.grid[i][j];
                 let nextCellKey = j - 1;
 
                 while ( nextCellKey >= 0) {
                     let nextCell = this.grid[i][nextCellKey];
-                    if (!nextCell.isEmpty || (nextCellKey == (0)) ) {
-                     if( currentCell.value == nextCell.value) {
-                         this.grid[i][nextCellKey].x2(currentCell);
-                         hasMoved = true;
-                     } else { if (this.grid[i][nextCellKey].isEmpty) {
-                         this.grid[i][nextCellKey].x2(currentCell);
-                         hasMoved = true;
-                     } else {  hasMoved = true;break;}
-                     }
-
-                     break;
+                    if (!nextCell.isEmpty || (this.firstkey(nextCellKey)) ) {
+                        if ((nextCell.isEmpty && this.firstkey(nextCellKey))
+                            || nextCell.isSameGridCell(currentCell)) {
+                            this.grid[i][nextCellKey].x2(currentCell);
+                            hasMoved = true;
+                        } else if (!nextCell.isEmpty &&   nextCellKey + 1 != j) {
+                            this.grid[i][nextCellKey + 1 ].x2(currentCell);
+                            hasMoved = true;
+                        }
+                        break;
                     }
                     nextCellKey--;
                     nextCell = this.grid[i][nextCellKey];
@@ -146,20 +157,25 @@ class game_2048 {
     moveUp() {
         let hasMoved = false;
         for (let j = 0; j < this.size; j++) {
-            for (let i = this.size - 1 ; i >= 0; i--) {
+            for (let i = 1  ; i < this.size; i++) {
                 let currentCell = this.grid[i][j];
                 let nextCellKey = i - 1;
 
                 while ( nextCellKey >= 0) {
                     let nextCell = this.grid[nextCellKey][j];
-                    if (!nextCell.isEmpty || (nextCellKey == (0)) ) {
-
-                        this.grid[nextCellKey][j].x2(currentCell);
-                        hasMoved = true;
-
+                    if (!nextCell.isEmpty || (this.firstkey(nextCellKey)) ) {
+                        if ((nextCell.isEmpty && this.firstkey(nextCellKey))
+                            || nextCell.isSameGridCell(currentCell)) {
+                            this.grid[nextCellKey][j].x2(currentCell);
+                            hasMoved = true;
+                        } else if (!nextCell.isEmpty &&   nextCellKey + 1 != i) {
+                            this.grid[nextCellKey + 1][j].x2(currentCell);
+                            hasMoved = true;
+                        }
+                        break;
                     }
                     nextCellKey--;
-                    nextCell = this.grid[j][nextCellKey];
+                    nextCell = this.grid[nextCellKey][j];
                 }
             }
         }
@@ -175,16 +191,21 @@ class game_2048 {
                 let currentCell = this.grid[i][j];
                 let nextCellKey = i + 1;
 
-                while ( nextCellKey < this.size) {
+                while (nextCellKey < this.size) {
                     let nextCell = this.grid[nextCellKey][j];
-                    if (!nextCell.isEmpty || (nextCellKey == (this.size - 1)) ) {
-
-                        this.grid[nextCellKey][j].x2(currentCell);
-                        hasMoved = true;
-
+                    if (!nextCell.isEmpty || this.LastKey(nextCellKey) ) {
+                        if ((nextCell.isEmpty && this.LastKey(nextCellKey))
+                            || nextCell.isSameGridCell(currentCell)) {
+                            this.grid[nextCellKey][j].x2(currentCell);
+                            hasMoved = true;
+                        } else if (!nextCell.isEmpty &&   nextCellKey - 1 != i) {
+                            this.grid[nextCellKey - 1][j].x2(currentCell);
+                            hasMoved = true;
+                        }
+                        break;
                     }
                     nextCellKey++;
-                    nextCell = this.grid[j][nextCellKey];
+                    nextCell = this.grid[nextCellKey][j];
                 }
             }
         }
@@ -193,7 +214,12 @@ class game_2048 {
             this.randomCell();
         }
     }
-
+    LastKey(key){
+        return key == (this.size - 1);
+    }
+    firstkey(key){
+        return key == 0;
+    }
 }
 
 let getRandomInterval = function (min, max) {
