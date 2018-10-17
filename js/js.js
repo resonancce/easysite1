@@ -139,7 +139,7 @@ class game_2048 {
             for(let i = 0; i < this.grid.length; i++){
                 for (let j = 0; j < this.grid[i].length; j++) {
 
-                    if (this.grid[i][j].value == 8 ){
+                    if (this.grid[i][j].value == 2048 ){
 
                             setTimeout(function () {
                                 if (confirm("Начать новую?")) {
