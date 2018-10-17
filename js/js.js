@@ -143,7 +143,7 @@ class game_2048 {
 
                             setTimeout(function () {
                                 if (confirm("Начать новую?")) {
-
+                                    location.reload();
                                 }
                                 else {
                                     location.reload();
