@@ -3,14 +3,17 @@ class grid_Cell {
     constructor (grid_item, game_2048){
         // создание ячеек
         this.game_2048 = game_2048;
+        this.grid_item = grid_item;
         this.cell = document.createElement('div');
         this.cell.className = 'grid_cell';
         grid_item.appendChild(this.cell);
-        if (Math.random() > 0.9) {
 
-            this.spawn();   //генерация 2 и 4
 
-        }
+               if (Math.random() > 0.9) {
+                   this.spawn();
+               }
+
+
 
 
     }
@@ -25,6 +28,7 @@ class grid_Cell {
        if (value == 0) {
            this.cell.innerHTML = '' ;
        } else {this.cell.innerHTML = value}
+       this.cell.setAttribute('color', value);
     }
 
     clear() {
@@ -37,6 +41,8 @@ class grid_Cell {
             this.game_2048.ratting(this.value + cell.value);
         }
         this.value += cell.value ;
+
+        new Animate(cell, this);
         cell.clear();
     }
 
@@ -55,6 +61,31 @@ class grid_Cell {
 
 }
 
+class Animate {
+
+    constructor (fromCell, toCell){
+        this.cell = fromCell.cell.cloneNode(true);
+        this.cell.className = 'animate';
+        fromCell.grid_item.appendChild(this.cell);
+
+        this.cell.style.top =  fromCell.cell.offsetTop + 'px';
+        this.cell.style.left =  fromCell.cell.offsetLeft + 'px';
+
+        fromCell.grid_item.appendChild(this.cell);
+
+
+
+
+
+        setTimeout(function () {
+            fromCell.grid_item.removeChild(this.cell);
+
+        }.bind(this), 1000)
+       // toCell.cell.offsetTop
+        //toCell.cell.offsetLeft
+    }
+
+}
 class game_2048 {
     constructor(Element, size) {
         this.size = size;
@@ -68,7 +99,8 @@ class game_2048 {
         for (let i = 0; i < size; i++) {
             this.grid[i] = [];
             for (let j = 0; j < size; j++) {
-                this.grid[i][j] = new grid_Cell(grid_item, this);
+
+                    this.grid[i][j] = new grid_Cell(grid_item, this);
 
             }
         }
@@ -89,7 +121,7 @@ class game_2048 {
     }
 
         randomCell() {
-            var emptyGridCells = [];
+           let emptyGridCells = [];
             for (let i = 0; i < this.grid.length; i++)
                 for (let j = 0; j < this.grid[i].length; j++) {
                     if (!this.grid[i][j].value) {
@@ -97,25 +129,30 @@ class game_2048 {
                     }
                 }
             if (emptyGridCells.length) {
-                emptyGridCells[getRandomInterval(0, emptyGridCells.length - 1)].spawn();
+                emptyGridCells[getRandomInterval(0, emptyGridCells.length -1  )].spawn();
             } else {
                 alert('loser');
             }
 
 
+
             for(let i = 0; i < this.grid.length; i++){
                 for (let j = 0; j < this.grid[i].length; j++) {
 
-                    if (this.grid[i][j].value == 8){
+                    if (this.grid[i][j].value == 8 ){
 
-                        setTimeout(function (){var istrue = confirm("Вы выиграли, хотите продолжить?");
-                            if (istrue) {
+                            setTimeout(function () {
+                                if (confirm("Начать новую?")) {
 
-                            }
-                            else {
-                                new game_2048(document.body, 4);;
-                          }
-                        },200);
+                                }
+                                else {
+                                    location.reload();
+                                }
+                            },200)
+
+
+
+
                     }
 
                 }
